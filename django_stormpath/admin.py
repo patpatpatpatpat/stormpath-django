@@ -12,13 +12,13 @@ class StormpathUserAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'is_staff', 'given_name', 'surname')
+    list_display = ('username', 'email', 'is_staff', 'given_name', 'surname')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('email', 'given_name', 'surname')
     ordering = ('email',)
     filter_horizontal = ('groups', 'user_permissions',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('username', 'email', 'password')}),
         ('Personal info', {'fields': ('given_name', 'surname')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups',)}),
         ('Important dates', {'fields': ('last_login',)}),

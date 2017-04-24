@@ -398,7 +398,6 @@ class StormpathBaseUser(AbstractBaseUser, PermissionsMixin):
             raise e
 
     def save(self, *args, **kwargs):
-        self.username = getattr(self, self.USERNAME_FIELD)
         # Are we updating an existing User?
         if self.id:
             self._update_for_db_and_stormpath(*args, **kwargs)
