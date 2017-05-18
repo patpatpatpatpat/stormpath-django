@@ -66,19 +66,12 @@ class StormpathBackend(ModelBackend):
         try:
             user = UserModel.objects.get(Q(username=account.username) | Q(email=account.email))
             user._mirror_data_from_stormpath_account(account)
-            self._mirror_groups_from_stormpath()
-            users_sp_groups = [g.name for g in account.groups]
-            user.groups = Group.objects.filter(name__in=users_sp_groups)
             user._save_db_only()
 
             return user
         except UserModel.DoesNotExist:
             user = UserModel()
             user._mirror_data_from_stormpath_account(account)
-            self._mirror_groups_from_stormpath()
-            user._save_db_only()
-            users_sp_groups = [g.name for g in account.groups]
-            user.groups = Group.objects.filter(name__in=users_sp_groups)
             user._save_db_only()
 
             return user
