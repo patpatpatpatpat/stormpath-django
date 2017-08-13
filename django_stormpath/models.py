@@ -50,9 +50,7 @@ def get_default_is_active():
     Stormpath user is active by default if e-mail verification is
     disabled.
     """
-    directory = APPLICATION.default_account_store_mapping.account_store
-    verif_email = directory.account_creation_policy.verification_email_status
-    return verif_email == AccountCreationPolicy.EMAIL_STATUS_DISABLED
+    return True
 
 
 class StormpathUserManager(BaseUserManager):
