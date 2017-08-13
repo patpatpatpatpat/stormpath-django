@@ -396,12 +396,7 @@ class StormpathBaseUser(AbstractBaseUser, PermissionsMixin):
             raise e
 
     def save(self, *args, **kwargs):
-        # Are we updating an existing User?
-        if self.id:
-            self._update_for_db_and_stormpath(*args, **kwargs)
-        # Or are we creating a new user?
-        else:
-            self._create_for_db_and_stormpath(*args, **kwargs)
+        self._save_db_only()
 
     def delete(self, *args, **kwargs):
         with transaction.atomic():
