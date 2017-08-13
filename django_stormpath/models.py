@@ -405,13 +405,7 @@ class StormpathBaseUser(AbstractBaseUser, PermissionsMixin):
 
     def delete(self, *args, **kwargs):
         with transaction.atomic():
-            href = self.href
             super(StormpathBaseUser, self).delete(*args, **kwargs)
-            try:
-                account = APPLICATION.accounts.get(href)
-                account.delete()
-            except StormpathError:
-                raise
 
 
 class StormpathUser(StormpathBaseUser):
