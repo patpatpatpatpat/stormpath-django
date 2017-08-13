@@ -42,7 +42,7 @@ CLIENT = Client(
     cache_options = getattr(settings, 'STORMPATH_CACHE_OPTIONS', None)
 )
 
-APPLICATION = CLIENT.applications.get(settings.STORMPATH_APPLICATION)
+APPLICATION = None
 
 
 def get_default_is_active():
