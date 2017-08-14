@@ -42,7 +42,7 @@ CLIENT = Client(
     cache_options = getattr(settings, 'STORMPATH_CACHE_OPTIONS', None)
 )
 
-APPLICATION = CLIENT.applications.get(settings.STORMPATH_APPLICATION)
+APPLICATION = None
 
 
 def get_default_is_active():
@@ -50,9 +50,7 @@ def get_default_is_active():
     Stormpath user is active by default if e-mail verification is
     disabled.
     """
-    directory = APPLICATION.default_account_store_mapping.account_store
-    verif_email = directory.account_creation_policy.verification_email_status
-    return verif_email == AccountCreationPolicy.EMAIL_STATUS_DISABLED
+    return True
 
 
 class StormpathUserManager(BaseUserManager):
@@ -398,29 +396,17 @@ class StormpathBaseUser(AbstractBaseUser, PermissionsMixin):
             raise e
 
     def save(self, *args, **kwargs):
-        # Are we updating an existing User?
-        if self.id:
-            self._update_for_db_and_stormpath(*args, **kwargs)
-        # Or are we creating a new user?
-        else:
-            self._create_for_db_and_stormpath(*args, **kwargs)
+        self._save_db_only()
 
     def delete(self, *args, **kwargs):
         with transaction.atomic():
-            href = self.href
             super(StormpathBaseUser, self).delete(*args, **kwargs)
-            try:
-                account = APPLICATION.accounts.get(href)
-                account.delete()
-            except StormpathError:
-                raise
 
 
 class StormpathUser(StormpathBaseUser):
     pass
 
 
-@receiver(pre_save, sender=Group)
 def save_group_to_stormpath(sender, instance, **kwargs):
     try:
         if instance.pk is None:
@@ -447,7 +433,6 @@ def save_group_to_stormpath(sender, instance, **kwargs):
         raise IntegrityError(e)
 
 
-@receiver(pre_delete, sender=Group)
 def delete_group_from_stormpath(sender, instance, **kwargs):
     try:
         APPLICATION.groups.search({'name': instance.name})[0].delete()
