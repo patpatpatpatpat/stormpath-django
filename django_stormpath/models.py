@@ -105,7 +105,9 @@ class StormpathUserManager(BaseUserManager):
             raise ValueError("Users must provide a given name and a surname")
 
         user = self.model(email=StormpathUserManager.normalize_email(email),
-            given_name=given_name, surname=surname)
+            given_name=given_name,
+            surname=surname,
+            username=StormpathUserManager.normalize_email(email))
 
         user.set_password(password)
         user.save(using=self._db)
@@ -113,7 +115,7 @@ class StormpathUserManager(BaseUserManager):
         return user
 
     def create_user(self, email, given_name=None, surname=None, password=None,
-                    first_name=None, last_name=None):
+                    first_name=None, last_name=None, username=None):
         if first_name and not given_name:
             given_name = first_name
         if last_name and not surname:
